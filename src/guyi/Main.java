@@ -24,7 +24,7 @@ public class Main {
         OutputStream outputStream = null;
         try {
 
-            outputStream = new FileOutputStream(s);
+            outputStream = new FileOutputStream(s,false);
             for (Class c : classList) {
                 writeHookToFile(outputStream, c);
             }
@@ -43,8 +43,8 @@ public class Main {
             Class<?>[] classArray = m.getParameterTypes();
             StringBuilder argsSb = new StringBuilder();
             for(int i = 0;i < classArray.length;i++){
-                argsSb.append(classArray[i].getName());
-                if(i == classArray.length - 1) {
+                argsSb.append('\'').append(classArray[i].getName()).append('\'');
+                if(i != classArray.length - 1) {
                     // do not write trailing comma
                     argsSb.append(',');
                 }
@@ -52,5 +52,7 @@ public class Main {
             writer.println(classJsName + "." + m.getName() + ".overload(" + argsSb.toString() + ").implementation =" +
                     " function() { this." + m.getName() + ".call(this,arguments);  }" );
         }
+
+        writer.flush();
     }
 }
